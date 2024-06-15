@@ -98,10 +98,47 @@ class Wikipedia:
 
     # Calculate the page ranks and print the most popular pages.
     def find_most_popular_pages(self):
-        #------------------------#
-        # Write your code here!  #
-        #------------------------#
-        pass
+        num_nodes = len(self.titles)
+        current_rank = [1.0 / num_nodes] * num_nodes
+        updated_rank = [0.0] * num_nodes
+        damping_factor = 0.85
+        epsilon = 0.01  # 収束閾値
+
+        while True:
+            # ランクを更新するためのにリセット
+            updated_rank = [0.0] * num_nodes
+
+            # 各ページからのランクの分配
+            for src in self.titles.keys():
+                if self.links[src]:
+                    shared_rank = damping_factor * current_rank[src] / len(self.links[src])
+                else:
+                    shared_rank = 0
+
+                universal_rank = (1 - damping_factor) * current_rank[src] / num_nodes
+
+                for dst in self.links[src]:
+                    updated_rank[dst] += shared_rank
+
+                for i in range(num_nodes):
+                    updated_rank[i] += universal_rank
+
+            sum_ranks = sum(updated_rank)
+            updated_rank = [rank / sum_ranks for rank in updated_template]
+
+            # 収束条件のチェック
+            diff = sum(abs(updated_rank[i] - current_rank[i]) for i in range(num_nodes))
+            if diff < epsilon:
+                break
+
+            current_rank = updated_rank
+
+        # ランクが最も高いページトップ10を表示
+        ranked_pages = sorted(((self.titles[id], rank) for id, rank in enumerate(current_rank)), key=lambda x: x[1],
+                              reverse=True)[:10]
+        print("Top 10 most popular pages:")
+        for title, rank in ranked_pages:
+            print(f"{title}: {rank}")
 
 
     # Do something more interesting!!
