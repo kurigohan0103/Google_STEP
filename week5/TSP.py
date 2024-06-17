@@ -49,7 +49,7 @@ def greedy_initial_route(points):
     return route
 
 # 2-optアルゴリズムを適用してルートを最適化する関数
-def apply_2opt(points, route):
+def 2opt(points, route):
     improvement = True  # 改善があったかどうかを示すフラグ
     while improvement:
         improvement = False
@@ -69,7 +69,7 @@ def apply_2opt(points, route):
 
 def solve(cities):
     initial_route = greedy_initial_route(cities)  # 初期ルートを生成
-    optimized_route = apply_2opt(cities, initial_route)  # 2-optアルゴリズム
+    optimized_route = 2opt(cities, initial_route)  # 2-opt
     return optimized_route
 
 
